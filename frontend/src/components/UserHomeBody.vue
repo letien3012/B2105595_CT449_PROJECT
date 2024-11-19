@@ -6,7 +6,7 @@
                     <img :src="`http://localhost:3005/${book.imagePath}`" class="card-img-top rounded" alt="">
                     <div class="card-body">
                         <h5 class="card-title text-center text-primary">{{book.TenSach}}</h5>
-                        <a  class="btn btn-primary btn-block rounded-pill">Mượn ngay</a>
+                        <!-- <a  class="btn btn-primary btn-block rounded-pill">Mượn ngay</a> -->
                     </div>
                 </div>
             </div>
@@ -30,14 +30,6 @@ export default {
             try {
                 this.books = await BookService.getAll();
                 console.log(books);
-                // const updatedBooks = await Promise.all(this.books.map(async (book) => {
-                //     // const publisher = await PublisherService.get(book.maNXB);
-                //     // return {
-                //     //     ...book,
-                //     //     tenNXB: publisher ? publisher.tenNXB : "Không rõ",  
-                //     // };
-                // }));
-                // this.books = updatedBooks;
             } catch (error) {
                 console.log(error);
             }

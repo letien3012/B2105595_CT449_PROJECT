@@ -59,9 +59,9 @@ class SachService {
         return result;
     }
 
-    async delete(id) {
+    async delete(MaSach) {
         const result = await this.Sach.findOneAndDelete({
-            _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+            MaSach: MaSach ? MaSach : null,
         });
         return result;
     }

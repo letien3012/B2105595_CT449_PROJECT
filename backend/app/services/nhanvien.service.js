@@ -7,12 +7,13 @@ class NhanVienService {
 
     extractNhanVienData(payload) {
         const NhanVien = {
-            MSNV: maNhanVien,
+            MSNV: payload.MSNV,
             HoTenNV: payload.HoTenNV,
             Password: payload.Password,
             ChucVu: payload.ChucVu,
             DiaChi: payload.DiaChi,
             SoDienThoai: payload.SoDienThoai,
+            Password: payload.Password
         };
         Object.keys(NhanVien).forEach(
             (key) => NhanVien[key] === undefined && delete NhanVien[key]
@@ -37,6 +38,11 @@ class NhanVienService {
     async findByName(HoTenNV) {
         return await this.find({
             HoTenNV: { $regex: new RegExp(HoTenNV), $options: "i" },
+        });
+    }
+    async findByMSNV(MSNV) {
+        return await this.NhanVien.findOne({
+            MSNV: MSNV ? MSNV : null,
         });
     }
 

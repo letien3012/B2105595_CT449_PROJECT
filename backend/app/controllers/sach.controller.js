@@ -1,8 +1,9 @@
-const { Double } = require("mongodb");
+// const { Double } = require("mongodb");
 const ApiError = require("../api-error");
 const SachService = require("../services/sach.service");
 const MongoDB = require("../utils/mongodb.util");
-
+const fs = require('fs');
+const path = require('path');
 const getNextSequenceValue = async (sequenceName) => {
   const db = MongoDB.client.db(); 
   const sequenceDocument = await db.collection('counters').findOneAndUpdate(
@@ -88,22 +89,53 @@ exports.findOne = async (req, res, next) => {
   }
 };
 
-exports.update = async (req, res, next) => {
-  if (Object.keys(req.body).length === 0){
-    return next(new ApiError(400, "Dữ liệu cập nhật sách không tìm thấy"));
-  }
+// exports.update = async (req, res, next) => {
+//   // if (Object.keys(req.body).length === 0){
+//   //   return next(new ApiError(400, "Dữ liệu cập nhật sách không tìm thấy"));
+//   // }
 
+//   try {
+//     const sachService = new SachService(MongoDB.client);
+//     const bookData = JSON.parse(req.body.bookData); 
+//     if (req.file) {
+//       bookData.imagePath = req.file.path;
+//     }
+//     const document = await sachService.update(req.params.id, bookData);
+//     if (!document){
+//       return next(new ApiError(404, "Không tìm thấy sách"));
+//     }
+//     return res.send({ message: "Cập nhật thông tin sách thành công"});
+//   } catch (error) {
+//     return next(new ApiError(500, `Lỗi khi cập nhật sách có id=${req.params.id}`));
+//   }
+// };
+exports.update = async (req, res, next) => {
   try {
     const sachService = new SachService(MongoDB.client);
-    const bookData = JSON.parse(req.body.bookData); 
-    if (req.file) {
-      bookData.imagePath = req.file.path;
-    }
-    const document = await sachService.update(req.params.id, bookData);
-    if (!document){
+    
+    const existingBook = await sachService.findById(req.params.id);
+    if (!existingBook) {
       return next(new ApiError(404, "Không tìm thấy sách"));
     }
-    return res.send({ message: "Cập nhật thông tin sách thành công"});
+    const bookData = JSON.parse(req.body.bookData);
+    if (req.file) {
+      if (existingBook.imagePath) {
+        const oldImagePath = path.join(__dirname, '../../', existingBook.imagePath);
+        fs.unlink(oldImagePath, (err) => {
+          if (err) {
+            console.error("Lỗi khi xóa hình ảnh cũ:", err);
+          }
+        });
+      }
+      bookData.imagePath = req.file.path; // Cập nhật đường dẫn hình ảnh mới
+    }
+
+    const document = await sachService.update(req.params.id, bookData);
+    if (!document) {
+      return next(new ApiError(404, "Không tìm thấy sách"));
+    }
+    
+    return res.send({ message: "Cập nhật thông tin sách thành công" });
   } catch (error) {
     return next(new ApiError(500, `Lỗi khi cập nhật sách có id=${req.params.id}`));
   }
@@ -112,21 +144,51 @@ exports.update = async (req, res, next) => {
 exports.delete = async (req, res, next) => {
   try {
     const sachService = new SachService(MongoDB.client);
-    const document = await sachService.delete(req.params.id);
-    if (!document){
+    
+    const document = await sachService.findById(req.params.id);
+    if (!document) {
       return next(new ApiError(404, "Không tìm thấy sách"));
     }
-    return res.send({ message: "Xóa sách thành công"});
+    // console.log(document);
+    // Xóa hình ảnh nếu có
+    if (document.imagePath) {
+      const imagePath = path.join(__dirname, '../../',document.imagePath); 
+      console.log(imagePath);// Đường dẫn đến hình ảnh
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("Lỗi khi xóa hình ảnh:", err);
+        }
+      });
+    }
+
+    await sachService.delete(req.params.id);
+    return res.send({ message: "Xóa sách thành công" });
   } catch (error) {
     return next(new ApiError(500, `Không thể xóa sách id=${req.params.id}`));
   }
 };
-
 exports.deleteAll = async (req, res, next) => {
   try {
     const sachService = new SachService(MongoDB.client);
+    
+    // Lấy tất cả sách để xóa hình ảnh
+    const allBooks = await sachService.find({});
+    
+    // Xóa hình ảnh cho từng sách
+    allBooks.forEach(book => {
+      if (book.imagePath) {
+        const imagePath = path.join(__dirname, '../../', book.imagePath); 
+        fs.unlink(imagePath, (err) => {
+          if (err) {
+            console.error("Lỗi khi xóa hình ảnh:", err);
+          }
+        });
+      }
+    });
+
+    // Xóa tất cả sách
     const deletedCount = await sachService.deleteAll();
-    return res.send({ message: `Xóa thành công ${deletedCount} sách`});
+    return res.send({ message: `Xóa thành công ${deletedCount} sách` });
   } catch (error) {
     return next(new ApiError(500, "Lỗi khi xóa tất cả sách"));
   }

@@ -116,6 +116,27 @@ const routes = [
                 component: () => import("@/views/DetailBook.vue"),
                 props: true
             },
+            {
+                path: "/cartbook",
+                name: "cartbook",
+                component: () => import("@/views/CartBook.vue"),
+                meta: { requiresuserAuth: true },
+            },
+            {
+                path: "/register",
+                name: "userregister",
+                component: () => import("@/views/Register.vue")
+            },
+            {
+                path: "/login",
+                name: "userlogin",
+                component: () => import("@/views/Login.vue")
+            },
+            {
+                path: "/historyrent",
+                name: "historybook",
+                component: () => import("@/views/HistoryRent.vue")
+            },
         ]
     },
     {
@@ -138,6 +159,14 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+router.beforeEach((to, from, next) => {
+    const UserisAuthenticated = localStorage.getItem('usertoken');
+    if (to.matched.some(record => record.meta.requiresuserAuth) && !UserisAuthenticated) {
+        next({ name: 'userlogin' });
+    } else {
+        next();
+    }
 });
 
 export default router;

@@ -10,6 +10,9 @@ class ReaderService {
     async create(data){
         return (await this.api.post("/", data)).data;
     }
+    async login(data){
+        return (await this.api.post("/login", data)).data;
+    }
     async deleteAll(){
         return (await this.api.delete("/")).data;
     }

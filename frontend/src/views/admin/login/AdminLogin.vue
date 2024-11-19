@@ -40,11 +40,9 @@ export default {
                     localStorage.setItem('token', response.token);
                     // alert(response.message);
                     this.$router.push("/admin");
-                } else {
-                    this.errorMessage = 'Mã nhân viên hoặc mật khẩu không đúng!';
-                }
+                } 
             } catch (error) {
-                this.errorMessage = 'Có lỗi xảy ra. Vui lòng thử lại!';
+                this.errorMessage = 'Mã nhân viên hoặc mật khẩu không đúng!';
                 console.error(error); // Ghi lại lỗi để kiểm tra
             }
         }

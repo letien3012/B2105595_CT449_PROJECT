@@ -47,6 +47,11 @@ class TheoDoiMuonSachService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
     }
+    async findByMDG(MaDocGia) {
+        return await this.TheoDoiMuonSach.find({
+            MaDocGia: MaDocGia
+        }).toArray();
+    }
 
     async update(id, payload) {
         const filter = {

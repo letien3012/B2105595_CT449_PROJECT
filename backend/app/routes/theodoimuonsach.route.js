@@ -10,7 +10,7 @@ router
   .delete(theodoimuonsach.deleteAll);
 
 // router.route("/favorite").get(contacts.findAllFavorite);
-
+router.route("/findByUser/:MaDocGia").get(theodoimuonsach.findByUser)
 router
   .route("/:id")
   .get(theodoimuonsach.findOne)

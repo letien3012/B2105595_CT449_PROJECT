@@ -16,6 +16,9 @@ class PublisherService {
     async get(id){
         return (await this.api.get(`/${id}`)).data;
     }
+    async getByUser(MaDocGia){
+        return (await this.api.get(`/findByUser/${MaDocGia}`)).data;
+    }
     async update(id, data){
         return (await this.api.put(`/${id}`, data)).data;
     }

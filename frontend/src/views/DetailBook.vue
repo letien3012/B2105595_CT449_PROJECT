@@ -12,19 +12,17 @@
         <p class="price">Giá {{ book.DonGia }} vnđ </p>
         <div class="d-flex align-items-center mt-4">
           <label class="me-2">Số lượng:</label>
-          <button class="btn btn-outline-secondary" @click="decreaseQuantity">-</button>
-          <input type="number" class="form-control w-25 text-center mx-2" v-model.number="quantity" min="1"max="5">
-          <button class="btn btn-outline-secondary" @click="increaseQuantity">+</button>
+          <input type="number" class="form-control w-25 text-center mx-2" v-model.number="quantity" min="1" max="1">
         </div>
         <!-- Ngày mượn và ngày trả -->
         <div class="mt-4">
           <label for="borrowDate">Ngày mượn:</label>
           <input id="borrowDate" type="date" v-model="borrowDate" :min="minDate" @change="setDateRestrictions" class="form-control">
           <label for="returnDate" class="mt-2">Ngày trả:</label>
-          <input id="returnDate" type="date" v-model="returnDate" :min="borrowDate" :max="maxReturnDate"class="form-control">
+          <input id="returnDate" type="date" v-model="returnDate" :min="borrowDate" :max="maxReturnDate" class="form-control">
         </div>
-        <button class="btn btn-buy w-100 mt-3">Mượn sách</button>
-      </div>
+        <button class="btn btn-buy w-100 mt-3" @click="addToCart">Thêm vào giỏ sách</button>
+    </div>
       <!-- Cột chi tiết sách -->
       <div class="col-md-3">
         <table class="table table-striped table-hover">
@@ -46,6 +44,11 @@
               <th>NXB</th>
               <td>{{ book.tenNXB }}</td>
             </tr>
+            <tr>
+              <th>Tình trạng còn sách</th>
+              <td v-if="book.SoQuyen > 0" >Còn</td>
+              <td v-else >Hết</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -66,6 +69,7 @@ export default {
       returnDate: '',  // Ngày trả
       minDate: '',     // Ngày mượn tối thiểu (ngày hiện tại)
       maxReturnDate: '', // Ngày trả tối đa (7 ngày sau ngày mượn)
+      cart: []         // Giỏ hàng
     };
   },
   props: {
@@ -87,26 +91,61 @@ export default {
     },
     setDateRestrictions() {
       const today = new Date();
-
-      // Đặt minDate là ngày hiện tại
       this.minDate = today.toISOString().split('T')[0];
-
-      // Tính maxReturnDate là 7 ngày sau ngày mượn
       if (this.borrowDate) {
         const borrowDateObj = new Date(this.borrowDate);
         const maxReturn = new Date(borrowDateObj);
-        maxReturn.setDate(borrowDateObj.getDate() + 7); // Cộng thêm 7 ngày
-
+        maxReturn.setDate(borrowDateObj.getDate() + 7);
         this.maxReturnDate = maxReturn.toISOString().split('T')[0];
       }
     },
-    increaseQuantity() {
-      if (this.quantity<5) this.quantity++;
-    },
-    decreaseQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--;
+    addToCart() {
+      if (this.book.SoQuyen < 1) {
+        alert("Sách không còn sẵn");
+        return;
       }
+
+      if (!this.borrowDate) {
+        alert("Vui lòng chọn ngày mượn.");
+        return;
+      }
+
+      if (!this.returnDate) {
+        alert("Vui lòng chọn ngày trả.");
+        return;
+      }
+
+      const borrowDateObj = new Date(this.borrowDate);
+      const returnDateObj = new Date(this.returnDate);
+      
+      if (returnDateObj <= borrowDateObj) {
+        alert("Ngày trả phải lớn hơn ngày mượn.");
+        return;
+      }
+
+      const item = {
+        id: this.book.MaSach,
+        TenSach: this.book.TenSach,
+        quantity: 1,
+        borrowDate: this.borrowDate,
+        returnDate: this.returnDate,
+        imagePath: this.book.imagePath
+      };
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      const existingItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+      
+      if (existingItemIndex > -1) {
+        cart[existingItemIndex].quantity += this.quantity;
+      } else {
+        cart.push(item);
+      }
+
+      // Lưu lại giỏ hàng vào localStorage
+      localStorage.setItem('cart', JSON.stringify(cart));
+
+      alert(`Đã thêm ${this.quantity} cuốn "${this.book.TenSach}" vào giỏ hàng!`);
     },
   },
   watch: {
@@ -128,15 +167,6 @@ export default {
     font-weight: bold;
     color: orange;
   }
-  .old-price {
-    text-decoration: line-through;
-    color: gray;
-  }
-  .discount {
-    color: red;
-    font-size: 14px;
-    font-weight: bold;
-  }
   .btn-buy {
     background-color: orange;
     color: white;
@@ -150,33 +180,26 @@ export default {
     width: 100%;
     margin-top: 20px;
   }
-
   th, td {
     padding: 12px;
     text-align: left;
   }
-
   th {
     background-color: #f8f9fa;
     font-weight: bold;
   }
-
   td {
     background-color: #ffffff;
   }
-
   table thead th {
     border-top: 2px solid #dee2e6;
   }
-
   table tbody tr:nth-child(odd) td {
     background-color: #f2f2f2;
   }
-
   table tbody tr:nth-child(even) td {
     background-color: #fafafa;
   }
-
   table td, table th {
     border: 1px solid #dee2e6;
   }

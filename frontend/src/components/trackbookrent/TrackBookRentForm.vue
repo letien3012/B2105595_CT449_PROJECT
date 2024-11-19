@@ -68,9 +68,13 @@
             <div class="mb-2" v-if="trackBookLocal.TrangThai">
                 <label for="TrangThai" class="form-label">Trạng thái</label>
                 <select name="TrangThai" class="form-select" v-model="trackBookLocal.TrangThai" >
-                    <option disabled>{{ trackBookLocal.TrangThai }}</option>
-                    <option value="Đã xác nhận">Đã xác nhận</option>
-                    <option value="Đã trả">Đã trả</option>
+                    <option value="Chờ xác nhận" 
+                    :disabled="['Chờ xác nhận', 'Đã xác nhận', 'Đã mượn', 'Đã trả', 'Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Chờ xác nhận</option>
+                    <option value="Đã xác nhận" :disabled="['Đã xác nhận', 'Đã mượn', 'Đã trả','Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã xác nhận</option>
+                    <option value="Đã mượn" :disabled="['Đã mượn', 'Đã trả', 'Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã mượn</option>
+                    <option value="Đã trả" :disabled="['Đã trả','Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã trả</option>
+                    <!-- <option value="Trễ hạn"  >Trễ hạn</option> -->
+                    <option value="Đã hủy" >Đã hủy</option>
                 </select>
                 <ErrorMessage name="TrangThai" class="error-feedback" />
             </div>

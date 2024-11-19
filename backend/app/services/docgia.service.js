@@ -7,13 +7,15 @@ class DocGiaService {
 
     extractDocGiaData(payload) {
         const DocGia = {
-            MaDocGia: `ĐG${payload.MaDocGia}`,
+            MaDocGia: payload.MaDocGia,
             HoLot: payload.HoLot,
             Ten: payload.Ten,
             NgaySinh: payload.NgaySinh,
             Phai: payload.Phai,
             DiaChi: payload.DiaChi,
             DienThoai: payload.DienThoai,
+            Email: payload.Email ? payload.Email : '',
+            MatKhau: payload.MatKhau
         };
         Object.keys(DocGia).forEach(
             (key) => DocGia[key] === undefined && delete DocGia[key]
@@ -43,7 +45,11 @@ class DocGiaService {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
         });
     }
-
+    async findByPhone(DienThoai) {
+        return await this.DocGia.findOne({
+            DienThoai: DienThoai ? DienThoai : null,
+        });
+    }
     async update(id, payload) {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,

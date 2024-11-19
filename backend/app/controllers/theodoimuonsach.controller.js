@@ -4,7 +4,8 @@ const MongoDB = require("../utils/mongodb.util");
 
 
 exports.create = async (req, res, next) => {
-  const { MaSach, MaDocGia, NgayMuon, NgayTra } = req.body;
+  console.log(req.body);
+  const { MaSach, MaDocGia, NgayMuon, NgayTra, } = req.body;
 
   if (!MaSach) {
     return next(new ApiError(400, "Mã sách không được trống"));
@@ -24,7 +25,6 @@ exports.create = async (req, res, next) => {
 
   try {
     const theoDoiMuonSachService = new TheoDoiMuonSachService(MongoDB.client);
-    
     const document = await theoDoiMuonSachService.create(req.body);
     return res.status(201).send(document); 
   } catch (error) {  
@@ -62,7 +62,19 @@ exports.findOne = async (req, res, next) => {
     return next(new ApiError(500, `Không tìm thấy theo dõi mượn sách có id=${req.params.id}`));
   }
 };
-
+exports.findByUser = async (req, res, next) => {
+  try {
+    const theoDoiMuonSachService = new TheoDoiMuonSachService(MongoDB.client);
+    const documents = await theoDoiMuonSachService.findByMDG(req.params.MaDocGia);
+    if (!documents) {
+      return next(new ApiError(404, "Không tìm thấy theo dõi mượn sách"));
+    }
+    return res.send(documents);
+  } catch (error) {
+    console.log(error)
+    return next(new ApiError(500, `Không tìm thấy theo dõi mượn sách có id=${req.params.MaDocGia}`));
+  }
+};
 exports.update = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return next(new ApiError(400, "Dữ liệu cập nhật theo dõi mượn sách không tìm thấy"));

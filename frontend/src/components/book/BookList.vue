@@ -31,7 +31,7 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </RouterLink>
-                            <button class="btn btn-sm btn-danger" @click="deleteBook(book._id)" title="Xóa">
+                            <button class="btn btn-sm btn-danger" @click="deleteBook(book.MaSach)" title="Xóa">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>

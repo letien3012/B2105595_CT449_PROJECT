@@ -26,7 +26,7 @@ export default {
     methods: {
         async addBookRent(data) {
             try {
-                data.TrangThai = 'Chưa Trả'
+                data.TrangThai = 'Đã xác nhận'
                 await BookRentService.create(data); 
                 alert("Thêm giao dịch mượn sách thành công");
                 this.$router.push("/admin/trackbookrent"); // Redirect to the book rental list page

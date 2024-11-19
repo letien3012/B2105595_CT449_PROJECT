@@ -5,21 +5,28 @@ const config = require("../config/index");
 const NhanVienService = require("../services/nhanvien.service");
 const MongoDB = require("../utils/mongodb.util");
 
-// exports.create = async (req, res, next) => {
-//   if (!req.body?.MSNV) {
-//     return next(new ApiError(400, "Mã nhân viên bản không được trống"));
-//   }
+exports.create = async (req, res, next) => {
+  if (!req.body?.MSNV || !req.body?.Password) {
+    return next(new ApiError(400, "Mã nhân viên hoặc mật khẩu không được trống"));
+  }
 
-//   try {
-//     const nhanVienService = new NhanVienService(MongoDB.client);
-//     const document = await nhanVienService.create(req.body);
-//     return res.send(document);
-//   } catch (error){
-//     return next(
-//       new ApiError(500, "Lỗi khi thêm nhân viên")
-//     );
-//   }
-// };
+  try {
+    const nhanVienService = new NhanVienService(MongoDB.client);
+    const nhanVien = await nhanVienService.findByMSNV(req.body.MSNV);
+    if (nhanVien) {
+      return next(new ApiError(401, "Mã nhân viên đã tồn tại"));
+    }
+    const hashedPassword = await bcrypt.hash(req.body.Password, 10);
+    const newEmployee = {
+      ...req.body,
+      Password: hashedPassword 
+    };
+    const document = await nhanVienService.create(newEmployee);
+    return res.send(document);
+  } catch (error) {
+    return next(new ApiError(500, "Lỗi khi thêm nhân viên"));
+  }
+};
 const createToken = (nhanVien) => {
   const payload = {
       MSNV: nhanVien.MSNV,
@@ -32,29 +39,34 @@ const createToken = (nhanVien) => {
 exports.login = async (req, res, next) => {
   const { MSNV, Password } = req.body;
   if (!MSNV || !Password) {
-      return next(new ApiError(400, "Mã nhân viên và mật khẩu không được trống"));
+    return next(new ApiError(400, "Mã nhân viên và mật khẩu không được trống"));
   }
+  
   try {
-      const nhanVienService = new NhanVienService(MongoDB.client);
-      const nhanVien = await nhanVienService.findByCredentials(MSNV, Password);
-      if (!nhanVien) {
-          return next(new ApiError(401, "Mã nhân viên hoặc mật khẩu không đúng"));
-      }
+    const nhanVienService = new NhanVienService(MongoDB.client);
+    const nhanVien = await nhanVienService.findByMSNV(MSNV);
+    if (!nhanVien) {
+      return next(new ApiError(401, "Mã nhân viên không tồn tại"));
+    }
 
-      // Nếu bạn sử dụng JWT, bạn có thể tạo token ở đây
-      const token = createToken(nhanVien); // Hàm tạo token của bạn
-      return res.send({
-          success: true,
-          message: "Đăng nhập thành công",
-          token: token, // Trả về token nếu cần
-          nhanVien: {
-              MSNV: nhanVien.MSNV,
-              ten: nhanVien.ten,
-          }
-      });
+    const isPasswordValid = await bcrypt.compare(Password, nhanVien.Password);
+    if (!isPasswordValid) {
+      return next(new ApiError(401, "Mật khẩu không đúng"));
+    }
+
+    const token = createToken(nhanVien);
+    return res.send({
+      success: true,
+      message: "Đăng nhập thành công",
+      token: token, 
+      nhanVien: {
+        MSNV: nhanVien.MSNV,
+        ten: nhanVien.ten,
+      }
+    });
   } catch (error) {
     console.log(error);
-      return next(new ApiError(500, "Lỗi khi đăng nhập"));
+    return next(new ApiError(500, "Lỗi khi đăng nhập"));
   }
 };
 exports.findAll = async (req, res, next) => {
