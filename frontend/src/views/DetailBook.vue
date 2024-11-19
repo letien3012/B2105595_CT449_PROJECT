@@ -118,7 +118,7 @@ export default {
       const borrowDateObj = new Date(this.borrowDate);
       const returnDateObj = new Date(this.returnDate);
       
-      if (returnDateObj <= borrowDateObj) {
+      if (returnDateObj < borrowDateObj) {
         alert("Ngày trả phải lớn hơn ngày mượn.");
         return;
       }
@@ -145,7 +145,7 @@ export default {
       // Lưu lại giỏ hàng vào localStorage
       localStorage.setItem('cart', JSON.stringify(cart));
 
-      alert(`Đã thêm ${this.quantity} cuốn "${this.book.TenSach}" vào giỏ hàng!`);
+      alert(`Đã thêm "${this.book.TenSach}" vào giỏ sách!`);
     },
   },
   watch: {

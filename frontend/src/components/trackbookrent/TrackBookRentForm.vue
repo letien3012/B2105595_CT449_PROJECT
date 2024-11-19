@@ -8,7 +8,7 @@
                         type="text" 
                         class="search-box" 
                         v-model="searchBookTerm" 
-                        placeholder="Tìm sách..." 
+                        :placeholder="trackBookLocal.MaSach ? trackBookLocal.MaSach : 'Tìm sách...' " 
                         @focus="isBookDropdownOpen = true" 
                         @input="filterBooks"
                     />
@@ -34,8 +34,8 @@
                     <input 
                         type="text" 
                         class="search-box" 
-                        v-model="searchReaderTerm" 
-                        placeholder="Tìm độc giả..." 
+                        v-model="searchReaderTerm"
+                        :placeholder="trackBookLocal.MaDocGia ? trackBookLocal.MaDocGia : 'Tìm độc giả...' " 
                         @focus="isReaderDropdownOpen = true" 
                         @input="filterReaders"
                     />
@@ -68,13 +68,12 @@
             <div class="mb-2" v-if="trackBookLocal.TrangThai">
                 <label for="TrangThai" class="form-label">Trạng thái</label>
                 <select name="TrangThai" class="form-select" v-model="trackBookLocal.TrangThai" >
-                    <option value="Chờ xác nhận" 
-                    :disabled="['Chờ xác nhận', 'Đã xác nhận', 'Đã mượn', 'Đã trả', 'Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Chờ xác nhận</option>
+                    <option value="Chờ xác nhận" :disabled="['Chờ xác nhận', 'Đã xác nhận', 'Đã mượn', 'Đã trả', 'Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Chờ xác nhận</option>
                     <option value="Đã xác nhận" :disabled="['Đã xác nhận', 'Đã mượn', 'Đã trả','Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã xác nhận</option>
                     <option value="Đã mượn" :disabled="['Đã mượn', 'Đã trả', 'Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã mượn</option>
                     <option value="Đã trả" :disabled="['Đã trả','Trễ hạn', 'Đã hủy'].includes(trackBookLocal.TrangThai)" >Đã trả</option>
-                    <!-- <option value="Trễ hạn"  >Trễ hạn</option> -->
-                    <option value="Đã hủy" >Đã hủy</option>
+                    <option value="Đã hủy" :disabled="trackBookLocal.TrangThai == 'Trễ hạn'" >Đã hủy</option>
+                    <option value="Trễ hạn" :disabled="trackBookLocal.TrangThai == 'Đã hủy'" >Trễ hạn</option>
                 </select>
                 <ErrorMessage name="TrangThai" class="error-feedback" />
             </div>
@@ -106,7 +105,7 @@ export default {
             MaSach: yup.string(),
             MaDocGia: yup.string(),
             NgayMuon: yup.date().required("Ngày mượn không được để trống.").typeError("Vui lòng chọn ngày"),
- NgayTra: yup
+            NgayTra: yup
                 .date()
                 .min(yup.ref("NgayMuon"), "Ngày trả không thể trước ngày mượn.")
                 .required("Ngày trả không được để trống.")
@@ -181,6 +180,7 @@ export default {
         },
         selectBook(book) {
             this.trackBookLocal.MaSach = book.MaSach;
+            this.trackBookLocal.TenSach = book.TenSach;
             this.searchBookTerm = book.TenSach;
             this.isBookDropdownOpen = false;
         },

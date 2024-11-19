@@ -25,6 +25,11 @@ export default{
     },
     methods: {
         async submitForm() {
+            const readerExist = await readerService.get(this.formUserData.DienThoai);
+            if (readerExist){
+                alert('Số điện thoại đã tồn tại');
+                return;
+            }
             await readerService.create(this.formUserData);
             this.$router.push("/login")
         }

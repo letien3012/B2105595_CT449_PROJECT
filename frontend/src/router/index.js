@@ -98,6 +98,11 @@ const routes = [
                 meta: { requiresAuth: true },
                 props: true
             },
+            {
+                path: "/:pathMatch(.*)*",
+                name: "notfound",
+                component: NotFound,
+            },
         ]
     },
     {
@@ -111,7 +116,7 @@ const routes = [
                 component: () => import("@/components/UserHomeBody.vue")
             },
             {
-                path: "/:bookId", // Thay đổi đường dẫn để rõ ràng hơn
+                path: "/book/:bookId", // Thay đổi đường dẫn để rõ ràng hơn
                 name: "detailbook",
                 component: () => import("@/views/DetailBook.vue"),
                 props: true
@@ -136,6 +141,11 @@ const routes = [
                 path: "/historyrent",
                 name: "historybook",
                 component: () => import("@/views/HistoryRent.vue")
+            },
+            {
+                path: "/:pathMatch(.*)*",
+                name: "notfound",
+                component: NotFound,
             },
         ]
     },

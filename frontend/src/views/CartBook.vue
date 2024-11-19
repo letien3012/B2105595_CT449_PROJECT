@@ -81,7 +81,6 @@ export default {
       //     return; 
       //   }
       // }
-      console.log(localStorage.getItem('userPhone'))
       var reader = await readerService.get(localStorage.getItem('userPhone'));
       for (let i = 0; i < this.cartItems.length; i++) {
         let MaSach = this.cartItems[i].id;

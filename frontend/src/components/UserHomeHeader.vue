@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm rounded">
     <a class="navbar-brand d-flex align-items-center justify-content-center" href="/">
       <img src="../assets/images/logo_user-home.jpg" alt="Logo" class="d-inline-block align-top rounded-circle" />
-      My Website
+      Thư viện trực tuyến
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -33,10 +33,10 @@
           <a class="nav-link" @click="logout">Đăng xuất</a>
         </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0 d-flex m-2">
+      <!-- <form class="form-inline my-2 my-lg-0 d-flex m-2">
         <input class="form-control flex-grow-1" type="search" placeholder="Tìm kiếm" aria-label="Search">
         <button class="btn btn-outline-primary my-2 my-sm-0 ms-2" type="submit">Tìm</button>
-      </form>
+      </form> -->
     </div>
     <div class="column">
       <div class="d-flex align-items-center">

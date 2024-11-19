@@ -4,9 +4,9 @@
           <div class="row justify-content-center text-center">
               <div class="col-md-4">
                   <h5>Thông Tin</h5>
-                  <p>© 2024 Your Company. All rights reserved.</p>
-                  <p>Địa chỉ: 123 Đường ABC, Thành phố XYZ</p>
-                  <p>Email: <a href="mailto:contact@yourcompany.com" class="footer-link">contact@yourcompany.com</a></p>
+                  <p>© 2024 Thư viện trực tuyến của Lê Minh Tiền</p>
+                  <p>Địa chỉ: Đường 3/2, Thành phố Cần Thơ</p>
+                  <p>Email: <a  class="footer-link">leminhtien3012@gmail.com</a></p>
               </div>
               <div class="col-md-4">
                   <h5>Theo Dõi Chúng Tôi</h5>
@@ -20,9 +20,9 @@
               <div class="col-md-4">
                   <h5>Liên Kết Nhanh</h5>
                   <ul class="list-unstyled">
-                      <li><a href="/about" class="footer-link">Giới thiệu</a></li>
-                      <li><a href="/services" class="footer-link">Dịch vụ</a></li>
-                      <li><a href="/contact" class="footer-link">Liên hệ</a></li>
+                      <li><a class="footer-link">Giới thiệu</a></li>
+                      <li><a class="footer-link">Dịch vụ</a></li>
+                      <li><a class="footer-link">Liên hệ</a></li>
                   </ul>
               </div>
           </div>
@@ -39,7 +39,7 @@
 
 .footer h5 {
   margin-bottom: 1em;
-  color: #58cbe8; /* Màu vàng cho tiêu đề */
+  color: #58cbe8; 
 }
 
 .footer p {
@@ -58,7 +58,7 @@
 }
 
 .social-icon:hover {
-  color: #ffffff; /* Màu vàng khi hover */
+  color: #ffffff; 
 }
 
 .footer-link {

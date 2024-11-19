@@ -36,7 +36,7 @@
     </div>
 </template>
 
-<script>
+<!-- <script>
 export default {
     props: {
         trackBooks: { type: Array, default: () => [] },
@@ -47,6 +47,46 @@ export default {
             this.$emit("delete:trackbook", trackBookId);
         },
     }
+};
+</script> -->
+<script>
+import trackbookrentService from '@/services/trackbookrent.service';
+export default {
+    props: {
+        trackBooks: { type: Array, default: () => [] },
+    },
+    methods: {
+        async updateTrackBookStatus() {
+            // Lấy danh sách sách cần cập nhật trạng thái
+            const trackBooksToUpdate = this.trackBooks.filter((trackBook) => {
+                if (trackBook.TrangThai == 'Trễ hạn'){
+                    return false;
+                }
+                // Kiểm tra nếu sách đã trễ hạn
+                const dueDate = new Date(trackBook.NgayTra);
+                const currentDate = new Date();
+                if (dueDate < currentDate ) {
+                    return true;
+                }
+                return false;
+            });
+
+            // Cập nhật trạng thái sách đã trễ hạn
+            for (const trackBook of trackBooksToUpdate) {
+                try {
+                    await trackbookrentService.update(trackBook._id, {TrangThai: 'Trễ hạn'});
+                    console.log('keke')
+                    console.log(`Cập nhật trạng thái sách ${trackBook.MaSach} thành đã trễ hạn`);
+                } catch (error) {
+                    console.error(`Lỗi cập nhật trạng thái sách ${trackBook.MaSach}: ${error}`);
+                }
+            }
+        },
+    },
+    mounted() {
+        // Tự động cập nhật trạng thái sách mỗi 1 giờ
+        setInterval(this.updateTrackBookStatus, 3600000); // 3600000 = 1 giờ
+    },
 };
 </script>
 

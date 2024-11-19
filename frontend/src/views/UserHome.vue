@@ -1,5 +1,5 @@
 <template>
-    <UserHomeHeader></UserHomeHeader>
+    <UserHomeHeader></UserHomeHeader >
     <!-- <UserHomeBody v-if="showDashboard" :books="books"></UserHomeBody> -->
     <RouterView ></RouterView>
     <AppFooter></AppFooter>
@@ -16,6 +16,11 @@
                 books: [],
             }
         },
+        methods: {
+            async loginSuccess(){
+                this.isLogin=true
+            }
+        }
         // computed: {
         //     showDashboard() {
         //     return this.$route.path === '/'; 
