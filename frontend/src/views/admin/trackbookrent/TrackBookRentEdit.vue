@@ -9,7 +9,7 @@
 <script>
 import BookRentForm from '@/components/trackbookrent/TrackBookRentForm.vue'; 
 import BookRentService from '@/services/trackbookrent.service'; 
-
+import bookService from '@/services/book.service';
 export default {
     components: {
         BookRentForm
@@ -27,7 +27,7 @@ export default {
         async getBookRent(id) {
             try {
                 this.trackBook = await BookRentService.get(id); 
-                console.log(this.trackBook);
+                // console.log(this.trackBook);
             } catch (e) {
                 console.log(e);
                 this.$router.push({
@@ -42,6 +42,13 @@ export default {
         },
         async updateBookRent(data) {
             try {
+                if (data.TrangThai == 'Đã trả'){
+                    const book = await bookService.get(data.MaSach);
+                    book.SoQuyen = book.SoQuyen+1;
+                    const formData = new FormData();
+                    formData.append('bookData', JSON.stringify(book));
+                    await bookService.update(book.MaSach, formData);
+                }
                 await BookRentService.update(this.trackBook._id, data); 
                 alert("Cập nhật thông tin giao dịch mượn sách thành công");
                 this.$router.push("/admin/trackbookrent"); 
