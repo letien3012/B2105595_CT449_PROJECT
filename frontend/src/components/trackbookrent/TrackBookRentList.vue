@@ -55,6 +55,7 @@ export default {
     props: {
         trackBooks: { type: Array, default: () => [] },
     },
+    emits: ["delete:trackbook"],
     methods: {
         async updateTrackBookStatus() {
             // Lấy danh sách sách cần cập nhật trạng thái
@@ -81,6 +82,9 @@ export default {
                     console.error(`Lỗi cập nhật trạng thái sách ${trackBook.MaSach}: ${error}`);
                 }
             }
+        },
+        deleteTrackBook(trackBookId) {
+            this.$emit("delete:trackbook", trackBookId);
         },
     },
     mounted() {
